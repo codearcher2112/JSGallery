@@ -1,14 +1,10 @@
 const current = document.querySelector('#current');
-const imgs = document.querySelectorAll('.imgs img');
-const opacity = 0.6;
-
-// Set first img opacity
-imgs[0].style.opacity = opacity
+const imgs = Array.from(document.querySelectorAll('.imgs img'));
+const imgsSrc = imgs.map(img => {
+  return img.src;
+}); 
 
 function imgClick(e) {
-  // Reset the opacity
-  imgs.forEach(img => (img.style.opacity = 1));
-
   // Change current image to src of clicked image
   current.src = e.target.src;
 
@@ -17,9 +13,20 @@ function imgClick(e) {
 
   // Remove fade-in class after 0.5s
   setTimeout(() => current.classList.remove('fade-in'), 500);
-
-  // Change the opacity to opacity var
-  e.target.style.opacity = opacity;
 }
 
-imgs.forEach( img => img.addEventListener('click', imgClick));
+function imgKeyPress(dir) {
+  current.src = imgsSrc[imgsSrc.indexOf(current.src) + (dir || 1)] || imgsSrc[dir ? imgsSrc.length - 1 : 0];
+  current.classList.add('fade-in');
+  setTimeout(() => current.classList.remove('fade-in'), 500);
+}
+
+imgs.forEach(img => img.addEventListener('click', imgClick));
+
+document.addEventListener("keydown", (e) => {
+  if (e.which === 37) {
+    imgKeyPress(-1);
+  } else if (e.which === 39) {
+    imgKeyPress();
+  }
+});
